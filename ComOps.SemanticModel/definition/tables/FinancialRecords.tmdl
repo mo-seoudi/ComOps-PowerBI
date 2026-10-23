@@ -1,0 +1,91 @@
+table FinancialRecords
+	column record_id
+		dataType: int64
+		sourceColumn: record_id
+		summarizeBy: none
+
+	column academic_year
+		dataType: string
+		sourceColumn: academic_year
+		summarizeBy: none
+
+	column month
+		dataType: dateTime
+		formatString: mmm yyyy
+		sourceColumn: month
+		summarizeBy: none
+
+	column scenario
+		dataType: string
+		sourceColumn: scenario
+		summarizeBy: none
+
+	column amount
+		dataType: double
+		formatString: #,0
+		sourceColumn: amount
+		summarizeBy: sum
+
+	column school_name
+		dataType: string
+		sourceColumn: school_name
+		summarizeBy: none
+
+	column stream_name
+		dataType: string
+		sourceColumn: stream_name
+		summarizeBy: none
+
+	column metric_code
+		dataType: string
+		sourceColumn: metric_code
+		summarizeBy: none
+
+	column academic_month_order
+		dataType: int64
+		sourceColumn: academic_month_order
+		summarizeBy: none
+
+	measure 'Commercial Revenue' = CALCULATE(SUM(FinancialRecords[amount]), FinancialRecords[metric_code] IN {"sales", "revenue", "rental_fees", "rental-fees", "rental fees", "enrich_me_revenue"})
+		formatString: #,0
+
+	measure 'School Income' = CALCULATE(SUM(FinancialRecords[amount]), FinancialRecords[metric_code] IN {"commission", "rental_fees", "rental-fees", "rental fees", "enrich_me_revenue"})
+		formatString: #,0
+
+	measure 'Actual Revenue' = CALCULATE([Commercial Revenue], FinancialRecords[scenario] = "Actual")
+		formatString: #,0
+
+	measure 'Actual Income' = CALCULATE([School Income], FinancialRecords[scenario] = "Actual")
+		formatString: #,0
+
+	measure 'Forecast Revenue' = CALCULATE([Commercial Revenue], FinancialRecords[scenario] = "Forecast")
+		formatString: #,0
+
+	measure 'Budget Revenue' = CALCULATE([Commercial Revenue], FinancialRecords[scenario] = "Budget")
+		formatString: #,0
+
+	measure 'Revenue vs Forecast %' = DIVIDE([Actual Revenue] - [Forecast Revenue], [Forecast Revenue])
+		formatString: 0.0%
+
+	partition FinancialRecords = m
+		mode: import
+		source =
+				let
+				    Source = #table(
+				        type table [record_id=Int64.Type, academic_year=text, month=date, scenario=text, amount=number, school_name=text, stream_name=text, metric_code=text],
+				        {
+				            {1, "AY2025-26", #date(2025,9,1), "Actual", 100000, "Repton Dubai", "Catering", "sales"},
+				            {2, "AY2025-26", #date(2025,9,1), "Actual", 12000, "Repton Dubai", "Catering", "commission"},
+				            {3, "AY2025-26", #date(2025,9,1), "Forecast", 110000, "Repton Dubai", "Catering", "sales"},
+				            {4, "AY2025-26", #date(2025,9,1), "Budget", 120000, "Repton Dubai", "Catering", "sales"},
+				            {5, "AY2025-26", #date(2025,10,1), "Actual", 80000, "Repton Al Barsha", "Uniform", "sales"},
+				            {6, "AY2025-26", #date(2025,10,1), "Actual", 24000, "Repton Al Barsha", "Uniform", "commission"},
+				            {7, "AY2025-26", #date(2025,10,1), "Actual", 40000, "Repton Abu Dhabi Fry", "Leasing", "rental_fees"},
+				            {8, "AY2025-26", #date(2025,11,1), "Actual", 30000, "Repton Abu Dhabi Fry", "Enrich ME", "enrich_me_revenue"},
+				            {9, "AY2024-25", #date(2024,9,1), "Actual", 90000, "Repton Dubai", "Catering", "sales"},
+				            {10, "AY2024-25", #date(2024,9,1), "Actual", 10000, "Repton Dubai", "Catering", "commission"}
+				        }
+				    ),
+				    AddMonthOrder = Table.AddColumn(Source, "academic_month_order", each if Date.Month([month]) >= 9 then Date.Month([month])-8 else Date.Month([month])+4, Int64.Type)
+				in
+				    AddMonthOrder
