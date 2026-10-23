@@ -1,0 +1,51 @@
+// ComOps measures — based on Leasing/main commercialReportingData.js
+// The 'both' role contributes to both Revenue and Income.
+// Do not sum the two measures as a combined financial total.
+
+Commercial Revenue =
+CALCULATE (
+    SUM ( FinancialRecords[amount] ),
+    FinancialRecords[metric_code] IN {
+        "sales", "revenue", "rental_fees", "rental-fees",
+        "rental fees", "enrich_me_revenue"
+    }
+)
+
+School Income =
+CALCULATE (
+    SUM ( FinancialRecords[amount] ),
+    FinancialRecords[metric_code] IN {
+        "commission", "rental_fees", "rental-fees",
+        "rental fees", "enrich_me_revenue"
+    }
+)
+
+Actual Revenue =
+CALCULATE ( [Commercial Revenue], FinancialRecords[scenario] = "Actual" )
+
+Forecast Revenue =
+CALCULATE ( [Commercial Revenue], FinancialRecords[scenario] = "Forecast" )
+
+Budget Revenue =
+CALCULATE ( [Commercial Revenue], FinancialRecords[scenario] = "Budget" )
+
+Actual Income =
+CALCULATE ( [School Income], FinancialRecords[scenario] = "Actual" )
+
+Forecast Income =
+CALCULATE ( [School Income], FinancialRecords[scenario] = "Forecast" )
+
+Budget Income =
+CALCULATE ( [School Income], FinancialRecords[scenario] = "Budget" )
+
+Revenue vs Forecast =
+[Actual Revenue] - [Forecast Revenue]
+
+Revenue vs Forecast % =
+DIVIDE ( [Revenue vs Forecast], [Forecast Revenue] )
+
+Revenue vs Budget =
+[Actual Revenue] - [Budget Revenue]
+
+Revenue vs Budget % =
+DIVIDE ( [Revenue vs Budget], [Budget Revenue] )
