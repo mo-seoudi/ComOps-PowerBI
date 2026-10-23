@@ -1,0 +1,68 @@
+table FinancialRecords
+	column AcademicYear
+		dataType: string
+		sourceColumn: AcademicYear
+	column Month
+		dataType: string
+		sourceColumn: Month
+	column MonthIndex
+		dataType: int64
+		sourceColumn: MonthIndex
+	column School
+		dataType: string
+		sourceColumn: School
+	column RevenueStream
+		dataType: string
+		sourceColumn: RevenueStream
+	column Metric
+		dataType: string
+		sourceColumn: Metric
+	column Scenario
+		dataType: string
+		sourceColumn: Scenario
+	column Amount
+		dataType: double
+		sourceColumn: Amount
+
+	measure 'Total Amount' = SUM(FinancialRecords[Amount])
+		formatString: #,0.00
+	measure 'Sales' = CALCULATE([Total Amount], FinancialRecords[Metric] = "Sales")
+		formatString: #,0.00
+	measure 'Commission' = CALCULATE([Total Amount], FinancialRecords[Metric] = "Commission")
+		formatString: #,0.00
+	measure 'Actual Sales' = CALCULATE([Sales], FinancialRecords[Scenario] = "Actual")
+		formatString: #,0.00
+	measure 'Actual Commission' = CALCULATE([Commission], FinancialRecords[Scenario] = "Actual")
+		formatString: #,0.00
+	measure 'Budget Sales' = CALCULATE([Sales], FinancialRecords[Scenario] = "Budget")
+		formatString: #,0.00
+	measure 'Forecast Sales' = CALCULATE([Sales], FinancialRecords[Scenario] = "Forecast")
+		formatString: #,0.00
+	measure 'Sales vs Budget' = [Actual Sales] - [Budget Sales]
+		formatString: #,0.00
+	measure 'Sales vs Budget %' = DIVIDE([Sales vs Budget], [Budget Sales])
+		formatString: 0.0%
+
+	partition FinancialRecords = m
+		mode: import
+		source =
+			let
+			    Months = {"Sep","Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug"},
+			    Years = {"AY2024-25","AY2025-26"},
+			    Schools = {"RDXB","RAB","FRY","ROSE"},
+			    Streams = {"Catering","Uniform","Transport"},
+			    Scenarios = {"Actual","Budget","Forecast"},
+			    Keys = List.CartesianProduct({Years, {0..11}, Schools, Streams, Scenarios}),
+			    Rows = List.Combine(List.Transform(Keys, (k) =>
+			        let
+			            y = k{0}, mi = k{1}, school = k{2}, stream = k{3}, scenario = k{4},
+			            base = 12000 + mi * 475 + List.PositionOf(Schools, school) * 3000 + List.PositionOf(Streams, stream) * 4200 + List.PositionOf(Years, y) * 2600,
+			            factor = if scenario = "Actual" then 1 else if scenario = "Budget" then 1.04 else 1.08,
+			            sales = Number.Round(base * factor, 2),
+			            commission = Number.Round(sales * (if stream = "Uniform" then 0.30 else if stream = "Transport" then 0.05 else 0.12), 2)
+			        in
+			            {{y, Months{mi}, mi+1, school, stream, "Sales", scenario, sales},
+			             {y, Months{mi}, mi+1, school, stream, "Commission", scenario, commission}})),
+			    Result = #table(type table [AcademicYear=text, Month=text, MonthIndex=Int64.Type, School=text, RevenueStream=text, Metric=text, Scenario=text, Amount=number], Rows)
+			in
+			    Result
