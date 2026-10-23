@@ -52,7 +52,7 @@ table FinancialRecords
 			    Schools = {"RDXB","RAB","FRY","ROSE"},
 			    Streams = {"Catering","Uniform","Transport"},
 			    Scenarios = {"Actual","Budget","Forecast"},
-			    Keys = List.CartesianProduct({Years, {0..11}, Schools, Streams, Scenarios}),
+			    Keys = List.Combine(List.Transform(Years, (y) => List.Combine(List.Transform({0..11}, (mi) => List.Combine(List.Transform(Schools, (school) => List.Combine(List.Transform(Streams, (stream) => List.Transform(Scenarios, (scenario) => {y, mi, school, stream, scenario}))))))))),
 			    Rows = List.Combine(List.Transform(Keys, (k) =>
 			        let
 			            y = k{0}, mi = k{1}, school = k{2}, stream = k{3}, scenario = k{4},
