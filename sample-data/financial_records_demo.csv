@@ -1,0 +1,13 @@
+record_id,academic_year,month,term,scenario,amount,school_code,school_name,stream_code,stream_name,metric_code,metric_name
+1,AY2025-26,2025-09-01,T1,Actual,100000,RDXB,Repton Dubai,catering,Catering,sales,Sales
+2,AY2025-26,2025-09-01,T1,Actual,12000,RDXB,Repton Dubai,catering,Catering,commission,Commission
+3,AY2025-26,2025-09-01,T1,Forecast,110000,RDXB,Repton Dubai,catering,Catering,sales,Sales
+4,AY2025-26,2025-09-01,T1,Budget,120000,RDXB,Repton Dubai,catering,Catering,sales,Sales
+5,AY2025-26,2025-10-01,T1,Actual,80000,RAB,Repton Al Barsha,uniform,Uniform,sales,Sales
+6,AY2025-26,2025-10-01,T1,Actual,24000,RAB,Repton Al Barsha,uniform,Uniform,commission,Commission
+7,AY2025-26,2025-10-01,T1,Actual,40000,FRY,Repton Abu Dhabi Fry,leasing,Leasing,rental_fees,Rental Fees
+8,AY2025-26,2025-11-01,T1,Actual,30000,FRY,Repton Abu Dhabi Fry,enrich_me,Enrich ME,enrich_me_revenue,Enrich ME Revenue
+9,AY2024-25,2024-09-01,T1,Actual,90000,RDXB,Repton Dubai,catering,Catering,sales,Sales
+10,AY2024-25,2024-09-01,T1,Actual,10000,RDXB,Repton Dubai,catering,Catering,commission,Commission
+11,AY2024-25,2024-10-01,T1,Actual,70000,RAB,Repton Al Barsha,uniform,Uniform,sales,Sales
+12,AY2024-25,2024-10-01,T1,Actual,21000,RAB,Repton Al Barsha,uniform,Uniform,commission,Commission
