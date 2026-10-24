@@ -20,3 +20,9 @@ The user created **ComOps-Base.pbip** with Power BI Desktop (October 2026). The 
 - Financial table, measures, visuals: **not yet validated in Desktop**.
 
 This document explicitly separates working baseline evidence from untested development work.
+
+## 2026-10-25 verified snapshot status
+
+The user confirmed that the complete **ComOps-Base** PBIP v0.4.1 package opens in Power BI Desktop and renders both Commercial Overview and Catering Dashboard. Later v0.5 formatting changes are **not validated** and should not replace v0.4.1. The repository root still contains the earlier broken ComOps project and must not be used for testing.
+
+A reproducible v0.4.1 ZIP was assembled with SHA-256 file manifest and accompanying baseline documentation. **It is a conversation artifact, not yet uploaded to GitHub**. The available GitHub connector only supports UTF-8 text file creation and cannot directly ingest this local ZIP or its binary/large theme resource. A full import is therefore still pending; do not claim this branch is working.
