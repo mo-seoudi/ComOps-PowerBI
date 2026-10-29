@@ -1,0 +1,9 @@
+table DimStream
+	column RevenueStream
+		dataType: string
+		sourceColumn: RevenueStream
+		summarizeBy: none
+
+	partition DimStream = calculated
+		mode: import
+		source = DATATABLE("RevenueStream", STRING, { {"Catering"}, {"Uniform"}, {"Transport"} })

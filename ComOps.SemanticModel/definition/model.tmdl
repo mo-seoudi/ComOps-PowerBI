@@ -1,14 +1,11 @@
 model Model
-	culture: en-GB
+	culture: en-US
 	defaultPowerBIDataSourceVersion: powerBI_V3
 	sourceQueryCulture: en-US
-	valueFilterBehavior: independent
-	dataAccessOptions
-		legacyRedirects
-		returnErrorValuesAsNull
 
-annotation __PBI_TimeIntelligenceEnabled = 1
-
-annotation PBI_ProTooling = ["DevMode"]
-
-ref cultureInfo en-GB
+ref table FactCommercial
+ref table DimMonth
+ref table DimSchool
+ref table DimStream
+ref table DimAcademicYear
+ref table 'Metric Selector'

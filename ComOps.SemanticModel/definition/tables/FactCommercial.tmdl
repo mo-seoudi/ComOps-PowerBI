@@ -1,0 +1,65 @@
+table FactCommercial
+	column AcademicYear
+		dataType: string
+		sourceColumn: AcademicYear
+		summarizeBy: none
+
+	column School
+		dataType: string
+		sourceColumn: School
+		summarizeBy: none
+
+	column RevenueStream
+		dataType: string
+		sourceColumn: RevenueStream
+		summarizeBy: none
+
+	column MonthOrder
+		dataType: int64
+		sourceColumn: MonthOrder
+		summarizeBy: none
+
+	column Sales
+		dataType: double
+		sourceColumn: Sales
+		summarizeBy: none
+
+	column Commission
+		dataType: double
+		sourceColumn: Commission
+		summarizeBy: none
+
+	measure 'Total Sales' = COALESCE(SUM(FactCommercial[Sales]), 0)
+		formatString: #,0;(#,0);0
+
+	measure 'Total Commission' = COALESCE(SUM(FactCommercial[Commission]), 0)
+		formatString: #,0;(#,0);0
+
+	measure 'Commission Rate' = DIVIDE([Total Commission], [Total Sales])
+		formatString: 0.0%
+
+	measure 'Selected Amount' = IF(SELECTEDVALUE('Metric Selector'[Metric], "Sales") = "Commission", [Total Commission], [Total Sales])
+		formatString: #,0;(#,0);0
+
+	measure 'Catering Amount' = CALCULATE([Selected Amount], DimStream[RevenueStream] = "Catering")
+		formatString: #,0;(#,0);0
+
+	measure 'Uniform Amount' = CALCULATE([Selected Amount], DimStream[RevenueStream] = "Uniform")
+		formatString: #,0;(#,0);0
+
+	measure 'Transport Amount' = CALCULATE([Selected Amount], DimStream[RevenueStream] = "Transport")
+		formatString: #,0;(#,0);0
+
+	partition FactCommercial = m
+		mode: import
+		source =
+			let
+			    Schools = {"RDXB", "RAB", "FRY", "ROSE"},
+			    Streams = {"Catering", "Uniform", "Transport"},
+			    Years = {"2025-2026", "2026-2027"},
+			    Months = {1..12},
+			    Records = List.Combine(List.Transform(Years, (yr) => List.Combine(List.Transform(Schools, (sc) => List.Combine(List.Transform(Streams, (st) => List.Transform(Months, (mo) => [AcademicYear = yr, School = sc, RevenueStream = st, MonthOrder = mo, Sales = Number.Round(30000 + List.PositionOf(Schools, sc) * 4700 + List.PositionOf(Streams, st) * 8300 + mo * 950 + List.PositionOf(Years, yr) * 2400, 0), Commission = Number.Round((30000 + List.PositionOf(Schools, sc) * 4700 + List.PositionOf(Streams, st) * 8300 + mo * 950 + List.PositionOf(Years, yr) * 2400) * 0.075, 0)]))))))),
+			    Source = Table.FromRecords(Records),
+			    Typed = Table.TransformColumnTypes(Source, {{"AcademicYear", type text}, {"School", type text}, {"RevenueStream", type text}, {"MonthOrder", Int64.Type}, {"Sales", type number}, {"Commission", type number}})
+			in
+			    Typed

@@ -1,0 +1,9 @@
+table DimSchool
+	column School
+		dataType: string
+		sourceColumn: School
+		summarizeBy: none
+
+	partition DimSchool = calculated
+		mode: import
+		source = DATATABLE("School", STRING, { {"RDXB"}, {"RAB"}, {"FRY"}, {"ROSE"} })

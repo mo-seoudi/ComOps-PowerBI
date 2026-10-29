@@ -1,0 +1,9 @@
+table 'Metric Selector'
+	column Metric
+		dataType: string
+		sourceColumn: Metric
+		summarizeBy: none
+
+	partition 'Metric Selector' = calculated
+		mode: import
+		source = DATATABLE("Metric", STRING, { {"Sales"}, {"Commission"} })

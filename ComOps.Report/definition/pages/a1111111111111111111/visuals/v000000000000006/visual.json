@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "v000000000000006",
+  "position": {
+    "x": 640,
+    "y": 118,
+    "z": 0,
+    "height": 120,
+    "width": 285,
+    "tabOrder": 6
+  },
+  "visual": {
+    "visualType": "card",
+    "drillFilterOtherVisuals": true,
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "FactCommercial"
+                    }
+                  },
+                  "Property": "Commission Rate"
+                }
+              },
+              "queryRef": "FactCommercial.Commission Rate",
+              "nativeQueryRef": "Commission Rate"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

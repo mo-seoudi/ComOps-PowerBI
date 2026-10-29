@@ -1,0 +1,14 @@
+table DimMonth
+	column MonthOrder
+		dataType: int64
+		sourceColumn: MonthOrder
+		summarizeBy: none
+
+	column MonthName
+		dataType: string
+		sourceColumn: MonthName
+		summarizeBy: none
+
+	partition DimMonth = calculated
+		mode: import
+		source = DATATABLE("MonthOrder", INTEGER, "MonthName", STRING, { {1, "Sep"}, {2, "Oct"}, {3, "Nov"}, {4, "Dec"}, {5, "Jan"}, {6, "Feb"}, {7, "Mar"}, {8, "Apr"}, {9, "May"}, {10, "Jun"}, {11, "Jul"}, {12, "Aug"} })
